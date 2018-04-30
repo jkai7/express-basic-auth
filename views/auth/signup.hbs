@@ -7,7 +7,13 @@
 
     <label for="password">Password</label> <br>
     <input type="text" name="password" placeholder="Kamehameha"> <br>
+    
+    {{#if errorMessage}}
+    <div>{{errorMessage}}</div>
+    {{/if}}
+    
     <button type="submit">Join</button>
 </form>
+
 
     <a href="/">Index Page</a>

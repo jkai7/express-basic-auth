@@ -23,21 +23,57 @@ authRouter.get('/signup', (req, res, next) => {
 authRouter.post('/signup', (req, res, next) => {
     const username = req.body.username;
     const password = req.body.password;
+
+    /* validation of signup */
+    if(username === "" || password === ""){
+        res.render('auth/signup', {
+            errorMessage: 'Not a valid username or password'
+        });
+        return;
+    }
+  
+User.findOne({'username': username}, 'username',
+    (err, user) => {
+        if (user !== null){
+            res.render('auth/signup',{
+                errorMessage: "Username Taken"
+            });
+            return;
+        }
+    }
+)
+    
     const salt = bcrypt.genSaltSync(bcryptSalt);
     const hashPass = bcrypt.hashSync(password, salt);
-
     const newUser = User({
         username: username,
         password: hashPass,
     });
+
+// /* validation of signup */
+//     if(username === "" || password === ""){
+//         res.render('auth/signup', {
+//             errorMessage: 'Not a valid username or password'
+//         });
+//         return;
+//     }
+   
+   
+/* create new user  and then redirect to congrats page */
     newUser.save((err) => {
-        res.redirect('/');
+        if(err){
+            res.render('auth/signup',{
+                errorMessage: "Failed to save new user"
+            });
+        }else{
+        res.redirect('auth/congrats');
+        }
     });
 });
 
 /* congrats page after sign up */
-authRouter.get('/congrats', (req, res, next) => {
-    res.render('auth/congrats')
-})
+// authRouter.get('/congrats', (req, res, next) => {
+//     res.render('auth/congrats')
+// })
 
 module.exports = authRouter;
