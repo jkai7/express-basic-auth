@@ -54,4 +54,5 @@ const authRoutes = require('./routes/authRoutes');
 app.use('/', authRoutes);
 
 
+
 module.exports = app;

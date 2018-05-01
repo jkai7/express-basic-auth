@@ -19,6 +19,12 @@ authRouter.get('/signup', (req, res, next) => {
     res.render('auth/signup');
 })
 
+/* congrats page after sign up */
+authRouter.get('/congrats', (req, res, next) => {
+    res.render('auth/congrats')
+})
+
+
 /* signup post */
 authRouter.post('/signup', (req, res, next) => {
     const username = req.body.username;
@@ -31,17 +37,6 @@ authRouter.post('/signup', (req, res, next) => {
         });
         return;
     }
-  
-User.findOne({'username': username}, 'username',
-    (err, user) => {
-        if (user !== null){
-            res.render('auth/signup',{
-                errorMessage: "Username Taken"
-            });
-            return;
-        }
-    }
-)
     
     const salt = bcrypt.genSaltSync(bcryptSalt);
     const hashPass = bcrypt.hashSync(password, salt);
@@ -57,23 +52,31 @@ User.findOne({'username': username}, 'username',
 //         });
 //         return;
 //     }
-   
-   
-/* create new user  and then redirect to congrats page */
-    newUser.save((err) => {
-        if(err){
+User.findOne({'username': username}, 'username',
+    (err, user) => {
+        if (user !== null){
             res.render('auth/signup',{
-                errorMessage: "Failed to save new user"
+                errorMessage: "Username Taken"
             });
-        }else{
-        res.redirect('auth/congrats');
+            return;
         }
-    });
-});
+        /* create new user  and then redirect to congrats page */
+            newUser.save((err) => {
+                if(err){
+                    res.render('/signup',{
+                        errorMessage: "Failed to save new user"
+                    });
+                }else{
+                    console.log(newUser);
+                res.render('auth/congrats');
+                }
+            });
+        });
+    }
+)
+   
+   
 
-/* congrats page after sign up */
-// authRouter.get('/congrats', (req, res, next) => {
-//     res.render('auth/congrats')
-// })
+
 
 module.exports = authRouter;
